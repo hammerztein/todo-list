@@ -1,4 +1,8 @@
 import './styles.css';
+import { registerEventListeners, renderProjects } from './uiController.js';
 
-console.log('hello');
+(() => {
+	registerEventListeners();
+	renderProjects();
+})();
 
