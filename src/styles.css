@@ -1,3 +1,22 @@
+*,
+*::after,
+*::before {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
 body {
-	background: red;
+	min-height: 100dvh;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+dialog {
+	align-self: center;
+	justify-self: center;
+	padding: 12px 18px;
+	
+	&::backdrop {
+		background-color: #333333AA;
+	}
 }
