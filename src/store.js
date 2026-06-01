@@ -1,5 +1,8 @@
 const loadFromStorage = () => {
-	const data = localStorage.getItem('projects') || [];
+	const data = localStorage.getItem('projects');
+
+	if (!data) return [];
+
 	return JSON.parse(data);
 };
 
@@ -9,3 +12,4 @@ const saveToStorage = (projects) => {
 };
 
 export { loadFromStorage, saveToStorage };
+
