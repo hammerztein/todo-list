@@ -7,8 +7,13 @@
 	</head>
 	<body>
 		<h1>Todo Project</h1>
-		<button command="show-modal" commandfor="project-modal">Add Project</button>
-		<dialog class="modal" id="project-modal">
+		<button
+			command="show-modal"
+			commandfor="project-modal"
+			data-button-type="add">
+			Add Project
+		</button>
+		<dialog class="modal" id="project-modal" data-type="add">
 			<div class="modal-title">
 				Project
 				<button commandfor="project-modal" command="close">Close</button>
@@ -28,4 +33,3 @@
 		<ul class="projects"></ul>
 	</body>
 </html>
-
