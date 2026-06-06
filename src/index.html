@@ -3,17 +3,29 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Taskpocalypse</title>
 	</head>
 	<body>
-		<h1>Todo Project</h1>
-		<button
-			command="show-modal"
-			commandfor="project-modal"
-			data-button-type="add"
-			id="add-project-btn">
-			Add Project
-		</button>
+		<main class="container">
+			<aside class="sidebar">
+				<header>
+					<h1>Taskpocalypse</h1>
+				</header>
+				<nav>
+					<ul class="projects"></ul>
+				</nav>
+				<footer>
+					<button
+						command="show-modal"
+						commandfor="project-modal"
+						data-button-type="add"
+						id="add-project-btn">
+						Add Project
+					</button>
+				</footer>
+			</aside>
+			<section class="content"></section>
+		</main>
 		<dialog id="project-modal">
 			<form action="" class="modal-form project-form">
 				<header>
@@ -48,6 +60,5 @@
 				</footer>
 			</form>
 		</dialog>
-		<ul class="projects"></ul>
 	</body>
 </html>
