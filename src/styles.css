@@ -96,6 +96,12 @@ body {
 		border-top: var(--main-border);
 		border-bottom: var(--main-border);
 
+		& ul {
+			display: flex;
+			flex-direction: column;
+			gap: var(--spacing-xs);
+		}
+
 		& ul li {
 				color: var(--secondary-text-color);
 				transition: var(--transition);

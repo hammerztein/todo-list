@@ -98,9 +98,24 @@ const handleDeleteProject = (projectId) => {
 	renderProjects();
 };
 
+const clearActiveProjects = () => {
+	const projects = [...elements.projectList.children];
+	console.log(projects);
+	projects.forEach((project) => project.classList.remove('selected'));
+};
+
+const setActiveProject = (e) => {
+	const projectListElement = e.target;
+	if (projectListElement.matches('li')) {
+		clearActiveProjects();
+		projectListElement.classList.add('selected');
+	}
+};
+
 const registerEventListeners = () => {
 	elements.projectForm.addEventListener('submit', handleFormSubmit);
 	elements.openModalBtn.addEventListener('click', setProjectModalType);
+	elements.projectList.addEventListener('click', setActiveProject);
 };
 
 export { renderProjects, registerEventListeners };
