@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 :root {
 	--main-bg-color: #1d2027;
 	--secondary-bg-color: #272a31;
@@ -20,9 +22,10 @@
 	--error-color: #ff4d4f;
 	--button-primary-bg: #adc6ff;
 	--button-primary-text: #002e6a;
-
+	--transition: all 0.15s ease-in-out;
 }
 
+/* RESET */
 *,
 *::after,
 *::before {
@@ -48,7 +51,7 @@ input, button {
 
 button {
 	cursor: pointer;
-	transition: all 0.15s ease-in-out;
+	transition: var(--transition);
 }
 
 li {
@@ -57,15 +60,85 @@ li {
 
 body {
 	min-height: 100dvh;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Inter, sans-serif;
 	background-color: #09090b;
 	color: var(--main-text-color);
 	font-size: var(--text-size-m);
 	line-height: 1.25;
 }
 
-/* MODAL */
+/* MAIN CONTAINER */
+.container {
+	min-height: 100dvh;
+	display: grid;
+	grid-template-columns: 250px auto;
+}
 
+/* SIDEBAR */
+.sidebar {
+	background-color: var(--main-bg-color);
+	border-right: var(--main-border);
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+
+	> * {
+		padding: var(--spacing-s);
+	}
+
+	& header {
+
+		& h1 {
+			font-size: var(--heading-default);
+		}
+	}
+
+	& nav {
+		border-top: var(--main-border);
+		border-bottom: var(--main-border);
+
+		& ul li {
+				color: var(--secondary-text-color);
+				transition: var(--transition);
+				padding: var(--spacing-xs);
+				border-radius: var(--border-radius-m);
+				cursor: pointer;
+		
+				&:hover {
+					background-color: var(--main-hover-color);
+				}
+		
+				&.selected {
+					background-color: var(--button-primary-bg);
+					color: var(--button-primary-text);
+				}
+			}
+	} 
+
+	& footer button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--spacing-xs);
+		width: 100%;
+		padding-block: var(--spacing-xs);
+		border-radius: var(--border-radius-m);
+		background-color: var(--button-primary-bg);
+		color: var(--button-primary-text);
+		font-weight: 600;
+
+		& svg {
+			height: 20px;
+			width: 20px;
+		}
+		
+		&:hover {
+			opacity: 0.8;
+		
+		}
+	}
+}
+
+/* MODAL */
 dialog {
 	align-self: center;
 	justify-self: center;
@@ -131,6 +204,10 @@ dialog {
 
 	& label, span {
 		font-size: var(--text-size-s);
+	}
+
+	& label {
+		color: var(--secondary-text-color);
 	}
 
     & input {
