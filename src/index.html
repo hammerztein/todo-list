@@ -14,21 +14,38 @@
 			id="add-project-btn">
 			Add Project
 		</button>
-		<dialog class="modal" id="project-modal">
-			<div class="modal-title">
-				Project
-				<button commandfor="project-modal" command="close">Close</button>
-			</div>
-			<form action="" class="form project-form">
-				<label for="">Project Title: </label>
-				<input
-					type="text"
-					required
-					name="project-title"
-					id="project-title"
-					min="1"
-					autofocus />
-				<button type="submit">Add Project</button>
+		<dialog id="project-modal">
+			<form action="" class="modal-form project-form">
+				<header>
+					<h3>Create Project</h3>
+					<button commandfor="project-modal" command="close" type="button">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<title>close</title>
+							<path
+								d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+						</svg>
+					</button>
+				</header>
+				<div class="form-inputs">
+					<div>
+						<label for="">Project Title*</label>
+						<input
+							type="text"
+							required
+							name="project-title"
+							id="project-title"
+							min="1"
+							autofocus
+							placeholder="Your project name" />
+						<span>Please insert project title</span>
+					</div>
+				</div>
+				<footer>
+					<button commandfor="project-modal" command="close" type="button">
+						Cancel
+					</button>
+					<button type="submit">Create Project</button>
+				</footer>
 			</form>
 		</dialog>
 		<ul class="projects"></ul>
