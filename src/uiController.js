@@ -6,7 +6,7 @@ import {
 } from './logicController.js';
 
 const elements = {
-	openModalBtn: document.querySelector('#open-project-modal'),
+	openModalBtn: document.querySelector('#add-project-btn'),
 	projectModal: document.querySelector('#project-modal'),
 	projectForm: document.querySelector('.project-form'),
 	projectFormTitleInput: document.querySelector('#project-title'),
