@@ -19,7 +19,8 @@
 						command="show-modal"
 						commandfor="project-modal"
 						data-button-type="add"
-						id="add-project-btn">
+						id="add-project-btn"
+						class="add-btn">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 							<title>plus</title>
 							<path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
@@ -28,7 +29,45 @@
 					</button>
 				</footer>
 			</aside>
-			<section class="content"></section>
+			<section class="content">
+				<header>
+					<h2>Project Board</h2>
+					<button
+						command="show-modal"
+						commandfor="todo-modal"
+						data-button-type="add"
+						id="add-todo-btn"
+						class="add-btn">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<title>plus</title>
+							<path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+						</svg>
+						<span>Add Todo</span>
+					</button>
+				</header>
+				<section class="todo-group">
+					<header>
+						<h3>Not Done <span id="not-done-count">1</span></h3>
+					</header>
+					<ul class="todos">
+						<li class="todo">
+							<h4>Todo Name</h4>
+							<p>todo shortened description</p>
+						</li>
+					</ul>
+				</section>
+				<section class="todo-group">
+					<header>
+						<h3>Done <span id="done-count">1</span></h3>
+					</header>
+					<ul class="todos">
+						<li class="todo">
+							<h4>Todo Name</h4>
+							<p>todo shortened description</p>
+						</li>
+					</ul>
+				</section>
+			</section>
 		</main>
 		<dialog id="project-modal">
 			<form action="" class="modal-form project-form">
@@ -44,7 +83,7 @@
 				</header>
 				<div class="form-inputs">
 					<div>
-						<label for="">Project Title*</label>
+						<label for="project-title">Project Title*</label>
 						<input
 							type="text"
 							required
@@ -61,6 +100,55 @@
 						Cancel
 					</button>
 					<button type="submit">Create Project</button>
+				</footer>
+			</form>
+		</dialog>
+		<dialog id="todo-modal">
+			<form class="modal-form todo-form">
+				<header>
+					<h3>Create Todo</h3>
+					<button commandfor="todo-modal" command="close" type="button">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<title>close</title>
+							<path
+								d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+						</svg>
+					</button>
+				</header>
+				<div class="form-inputs">
+					<div>
+						<label for="todo-title">Todo Title*</label>
+						<input
+							type="text"
+							required
+							name="todo-title"
+							id="todo-title"
+							min="1"
+							autofocus
+							placeholder="Your todo name" />
+						<span>Please insert todo title</span>
+					</div>
+					<div class="col-2">
+						<div>
+							<label for="todo-status">Status*</label>
+							<select name="todo-status" id="todo-status" required>
+								<option value="" disabled selected>Select Status</option>
+								<option value="false">Not Done</option>
+								<option value="true">Done</option>
+							</select>
+							<span>Please select todo status</span>
+						</div>
+						<div>
+							<label for="todo-date">Status <em>(optional)</em></label>
+							<input type="date" name="todo-date" id="todo-date" />
+						</div>
+					</div>
+				</div>
+				<footer>
+					<button commandfor="todo-modal" command="close" type="button">
+						Cancel
+					</button>
+					<button type="submit">Create Todo</button>
 				</footer>
 			</form>
 		</dialog>
