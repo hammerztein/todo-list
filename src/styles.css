@@ -38,7 +38,7 @@ svg {
 	fill: currentColor;
 }
 
-label, input, button {
+label, input, button, select {
 	font: inherit;
 	color: inherit;
 }
@@ -228,7 +228,8 @@ dialog {
 		background-color: var(--secondary-bg-color);
 	}
 
-	&.submitted input + span {
+	&.submitted input + span,
+	&.submitted select + span {
 		display: block;
 		color: var(--error-color);
 	}
@@ -259,6 +260,16 @@ dialog {
 	display: grid;
 	gap: var(--spacing-xs);
 
+	&.col-2 {
+		grid-template-columns: 1fr 1fr;
+		align-items: self-start;
+
+		> div {
+			display: grid;
+			gap: var(--spacing-xs);
+		}
+	}
+
 	& span {
 		display: none;
 	}
@@ -271,7 +282,7 @@ dialog {
 		color: var(--secondary-text-color);
 	}
 
-    & input {
+    & input, select {
 		padding: var(--spacing-xs) var(--spacing-s);
 		background-color: var(--input-bg-color);
 		border-radius: var(--border-radius-m);
