@@ -95,6 +95,7 @@ body {
 	& nav {
 		border-top: var(--main-border);
 		border-bottom: var(--main-border);
+		overflow: hidden;
 
 		& ul {
 			display: flex;
@@ -111,6 +112,11 @@ body {
 				padding: var(--spacing-xs);
 				border-radius: var(--border-radius-m);
 				cursor: pointer;
+
+				& span {
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
 
 				& .controls {
 					display: flex;
