@@ -130,6 +130,7 @@ body {
 					justify-content: center;
 					padding: 2px;
 					border-radius: var(--border-radius-s);
+					outline: 1px solid transparent;
 
 					&:hover {
 						background-color: var(--button-primary-bg);
@@ -149,6 +150,10 @@ body {
 				&.selected {
 					background-color: var(--button-primary-bg);
 					color: var(--button-primary-text);
+
+					& button:hover {
+						outline: var(--main-border);
+					}
 				}
 			}
 	} 
