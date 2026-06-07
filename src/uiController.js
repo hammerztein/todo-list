@@ -24,17 +24,24 @@ const clearProjectsContainer = () => {
 
 const createProjectElement = (project) => {
 	const listEl = document.createElement('li');
-	listEl.textContent = project.title;
 	listEl.dataset.id = project.id;
+	const projectTitle = document.createElement('span');
+	projectTitle.textContent = project.title;
+	const btnContainer = document.createElement('div');
+	btnContainer.className = 'controls';
 	const editBtn = document.createElement('button');
 	const delBtn = document.createElement('button');
-	editBtn.textContent = 'Edit';
+	editBtn.innerHTML =
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>pencil</title><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>';
 	editBtn.dataset.buttonType = 'edit';
-	delBtn.textContent = 'Delete';
+	delBtn.innerHTML =
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>delete</title><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>';
 	editBtn.addEventListener('click', (e) => handleProjectEdit(e, project));
 	delBtn.addEventListener('click', () => handleDeleteProject(project.id));
-	listEl.appendChild(editBtn);
-	listEl.appendChild(delBtn);
+	btnContainer.appendChild(editBtn);
+	btnContainer.appendChild(delBtn);
+	listEl.appendChild(projectTitle);
+	listEl.appendChild(btnContainer);
 	return listEl;
 };
 
@@ -103,8 +110,12 @@ const handleDeleteProject = (projectId) => {
 };
 
 const setActiveProject = (e) => {
-	const listEl = e.target;
-	if (listEl.matches('li')) {
+	const click = e.target;
+	if (click.closest('.controls')) {
+		return;
+	}
+	const listEl = click.closest('li');
+	if (listEl) {
 		const { id } = listEl.dataset;
 		elements.contentContainer.dataset.id = id;
 		clearActiveProjectsClass();
