@@ -12,6 +12,7 @@ const elements = {
 	projectFormTitleInput: document.querySelector('#project-title'),
 	projectList: document.querySelector('.projects'),
 	projectFormBtn: document.querySelector("button[type='submit']"),
+	contentContainer: document.querySelector('.container .content'),
 };
 
 const clearProjectsContainer = () => {
@@ -24,6 +25,7 @@ const clearProjectsContainer = () => {
 const createProjectElement = (project) => {
 	const listEl = document.createElement('li');
 	listEl.textContent = project.title;
+	listEl.dataset.id = project.id;
 	const editBtn = document.createElement('button');
 	const delBtn = document.createElement('button');
 	editBtn.textContent = 'Edit';
@@ -47,6 +49,7 @@ const renderProjects = () => {
 	const projects = getAllProjects();
 	clearProjectsContainer();
 	createProjectList(projects);
+	setActiveProjectClass();
 };
 
 const setProjectEditFields = (project) => {
@@ -95,21 +98,39 @@ const handleFormSubmit = (e) => {
 
 const handleDeleteProject = (projectId) => {
 	deleteProject(projectId);
+	clearActiveProject(projectId);
 	renderProjects();
 };
 
-const clearActiveProjects = () => {
+const setActiveProject = (e) => {
+	const listEl = e.target;
+	if (listEl.matches('li')) {
+		const { id } = listEl.dataset;
+		elements.contentContainer.dataset.id = id;
+		clearActiveProjectsClass();
+		setActiveProjectClass();
+	}
+};
+
+const clearActiveProject = (projectId) => {
+	if (projectId === elements.contentContainer.dataset.id) {
+		elements.contentContainer.removeAttribute('data-id');
+	}
+};
+
+const clearActiveProjectsClass = () => {
 	const projects = [...elements.projectList.children];
-	console.log(projects);
 	projects.forEach((project) => project.classList.remove('selected'));
 };
 
-const setActiveProject = (e) => {
-	const projectListElement = e.target;
-	if (projectListElement.matches('li')) {
-		clearActiveProjects();
-		projectListElement.classList.add('selected');
-	}
+const setActiveProjectClass = () => {
+	const projects = [...elements.projectList.children];
+	const activeProjectId = elements.contentContainer.dataset.id;
+	projects.forEach((project) => {
+		if (project.dataset.id === activeProjectId) {
+			project.classList.add('selected');
+		}
+	});
 };
 
 const registerEventListeners = () => {
