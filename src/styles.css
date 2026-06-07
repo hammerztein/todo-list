@@ -156,29 +156,41 @@ body {
 					}
 				}
 			}
-	} 
+	}
 
-	& footer button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: var(--spacing-xs);
+	& footer .add-btn {
 		width: 100%;
 		padding-block: var(--spacing-xs);
-		border-radius: var(--border-radius-m);
-		background-color: var(--button-primary-bg);
-		color: var(--button-primary-text);
-		font-weight: 600;
+		font-size: var(--text-size-m);
 
 		& svg {
-			height: 20px;
-			width: 20px;
-		}
-		
-		&:hover {
-			opacity: 0.8;
-		
-		}
+				height: 20px;
+				width: 20px;
+			}
+	}
+}
+
+.add-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--spacing-xs);
+	width: 115px;
+	font-size: var(--text-size-s);
+	padding-block: var(--spacing-xs);
+	border-radius: var(--border-radius-m);
+	background-color: var(--button-primary-bg);
+	color: var(--button-primary-text);
+	font-weight: 600;
+
+	& svg {
+		height: 16px;
+		width: 16px;
+	}
+
+	&:hover {
+		opacity: 0.8;
+
 	}
 }
 
