@@ -210,6 +210,11 @@ dialog {
 	& footer {
 		background-color: var(--secondary-bg-color);
 	}
+
+	&.submitted input + span {
+		display: block;
+		color: var(--error-color);
+	}
 }
 
 .modal-form header {

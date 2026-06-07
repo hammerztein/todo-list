@@ -65,6 +65,7 @@ const setProjectEditFields = (project) => {
 };
 
 const setProjectModalType = (e) => {
+	elements.projectForm.classList.remove('submitted');
 	const { buttonType } = e.currentTarget.dataset;
 	elements.projectFormBtn.textContent = `${buttonType[0]
 		.toUpperCase()
@@ -74,6 +75,7 @@ const setProjectModalType = (e) => {
 };
 
 const openEditModal = () => {
+	elements.projectForm.classList.remove('submitted');
 	elements.projectModal.showModal();
 };
 
@@ -85,6 +87,11 @@ const handleProjectEdit = (e, project) => {
 
 const handleFormSubmit = (e) => {
 	e.preventDefault();
+
+	if (elements.projectFormTitleInput.value === ' ') {
+		elements.projectForm.classList.add('submitted');
+		return;
+	}
 
 	if (elements.projectModal.dataset.type === 'add') {
 		const projectTitle = elements.projectFormTitleInput.value;
@@ -99,6 +106,7 @@ const handleFormSubmit = (e) => {
 		editProject(projectFormData);
 	}
 
+	elements.projectForm.classList.remove('submitted');
 	elements.projectModal.close();
 	renderProjects();
 };
