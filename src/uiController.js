@@ -3,16 +3,25 @@ import {
 	deleteProject,
 	editProject,
 	getAllProjects,
+	getProject,
+	addTodo,
 } from './logicController.js';
 
 const elements = {
-	openModalBtn: document.querySelector('#add-project-btn'),
+	openProjectModalBtn: document.querySelector('#add-project-btn'),
 	projectModal: document.querySelector('#project-modal'),
 	projectForm: document.querySelector('.project-form'),
 	projectFormTitleInput: document.querySelector('#project-title'),
 	projectList: document.querySelector('.projects'),
-	projectFormBtn: document.querySelector("button[type='submit']"),
+	projectFormBtn: document.querySelector(".project-form button[type='submit']"),
 	contentContainer: document.querySelector('.container .content'),
+	openTodoModalBtn: document.querySelector('#add-todo-btn'),
+	todoModal: document.querySelector('#todo-modal'),
+	todoForm: document.querySelector('.todo-form'),
+	todoFormTitleInput: document.querySelector('#todo-title'),
+	todoFormStatusInput: document.querySelector('#todo-status'),
+	todoFormDateInput: document.querySelector('#todo-date'),
+	todoFormBtn: document.querySelector(".todo-form button[type='submit']"),
 };
 
 const clearProjectsContainer = () => {
@@ -57,6 +66,27 @@ const renderProjects = () => {
 	clearProjectsContainer();
 	createProjectList(projects);
 	setActiveProjectClass();
+	renderTodos();
+};
+
+const renderTodos = () => {
+	const { id } = elements.contentContainer.dataset;
+
+	if (!id) {
+		elements.openTodoModalBtn.setAttribute('disabled', true);
+	}
+
+	if (id) {
+		const project = getProject(id);
+		const todos = project.todos;
+		elements.openTodoModalBtn.removeAttribute('disabled');
+
+		if (todos.length === 0) {
+			// Render empty placeholders
+		} else {
+			// Render todos
+		}
+	}
 };
 
 const setProjectEditFields = (project) => {
@@ -74,6 +104,16 @@ const setProjectModalType = (e) => {
 	elements.projectForm.reset();
 };
 
+const setTodoModalType = (e) => {
+	elements.todoForm.classList.remove('submitted');
+	const { buttonType } = e.currentTarget.dataset;
+	elements.todoFormBtn.textContent = `${buttonType[0]
+		.toUpperCase()
+		.concat(buttonType.slice(1))} Todo`;
+	elements.todoModal.dataset.type = buttonType;
+	elements.todoForm.reset();
+};
+
 const openEditModal = () => {
 	elements.projectForm.classList.remove('submitted');
 	elements.projectModal.showModal();
@@ -85,7 +125,7 @@ const handleProjectEdit = (e, project) => {
 	setProjectEditFields(project);
 };
 
-const handleFormSubmit = (e) => {
+const handleProjectFormSubmit = (e) => {
 	e.preventDefault();
 
 	if (elements.projectFormTitleInput.value === ' ') {
@@ -111,6 +151,31 @@ const handleFormSubmit = (e) => {
 	renderProjects();
 };
 
+const handleTodoFormSubmit = (e) => {
+	e.preventDefault();
+
+	if (
+		elements.todoFormTitleInput.value === ' ' ||
+		elements.todoFormStatusInput.value === ' '
+	) {
+		elements.todoForm.classList.add('submitted');
+		return;
+	}
+	if (elements.todoModal.dataset.type === 'add') {
+		const { id } = elements.contentContainer.dataset;
+		const todoFormData = {
+			title: elements.todoFormTitleInput.value,
+			status: elements.todoFormStatusInput.value,
+			date: elements.todoFormDateInput.value,
+		};
+		addTodo(id, todoFormData);
+	}
+
+	elements.todoForm.classList.remove('submitted');
+	elements.todoModal.close();
+	renderTodos();
+};
+
 const handleDeleteProject = (projectId) => {
 	deleteProject(projectId);
 	clearActiveProject(projectId);
@@ -128,6 +193,7 @@ const setActiveProject = (e) => {
 		elements.contentContainer.dataset.id = id;
 		clearActiveProjectsClass();
 		setActiveProjectClass();
+		renderTodos();
 	}
 };
 
@@ -153,9 +219,11 @@ const setActiveProjectClass = () => {
 };
 
 const registerEventListeners = () => {
-	elements.projectForm.addEventListener('submit', handleFormSubmit);
-	elements.openModalBtn.addEventListener('click', setProjectModalType);
+	elements.projectForm.addEventListener('submit', handleProjectFormSubmit);
+	elements.openProjectModalBtn.addEventListener('click', setProjectModalType);
 	elements.projectList.addEventListener('click', setActiveProject);
+	elements.todoForm.addEventListener('submit', handleTodoFormSubmit);
+	elements.openTodoModalBtn.addEventListener('click', setTodoModalType);
 };
 
 export { renderProjects, registerEventListeners };
