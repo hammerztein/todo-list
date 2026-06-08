@@ -5,7 +5,6 @@ export const addProject = (projectTitle) => {
 	const id = crypto.randomUUID();
 	const projects = loadFromStorage();
 	const newProject = new Project(id, projectTitle);
-
 	projects.push(newProject);
 	saveToStorage(projects);
 };
@@ -35,6 +34,14 @@ export const editProject = (editFormData) => {
 	const { id, title } = editFormData;
 	const projectToEdit = projects.find((project) => project.id === id);
 	projectToEdit.updateFields(editFormData);
+	saveToStorage(projects);
+};
+
+export const addTodo = (projectId, todoObj) => {
+	const projects = getAllProjects();
+	const projectToAddTodo = projects.find((project) => project.id === projectId);
+	todoObj.id = crypto.randomUUID();
+	projectToAddTodo.addTodo(todoObj);
 	saveToStorage(projects);
 };
 
