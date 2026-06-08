@@ -15,7 +15,8 @@ export default class Project {
 	}
 
 	addTodo(todoObj) {
-		const todo = new Todo(todoObj);
+		const { id, title, status, date } = todoObj;
+		const todo = new Todo(id, title, status, date);
 		this.todos.push(todo);
 	}
 
