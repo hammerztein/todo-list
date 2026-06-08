@@ -184,13 +184,20 @@ body {
 	font-weight: 600;
 
 	& svg {
-		height: 16px;
-		width: 16px;
+		height: 14px;
+		width: 14px;
 	}
 
 	&:hover {
 		opacity: 0.8;
 
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		background-color: var(--main-bg-color);
+		outline: var(--main-border);
+		color: var(--secondary-text-color);
 	}
 }
 
