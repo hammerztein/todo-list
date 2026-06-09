@@ -60,7 +60,7 @@ li {
 }
 
 body {
-	min-height: 100dvh;
+	height: 100dvh;
 	font-family: Inter, sans-serif;
 	background-color: #09090b;
 	color: var(--main-text-color);
@@ -70,7 +70,7 @@ body {
 
 /* MAIN CONTAINER */
 .container {
-	min-height: 100dvh;
+	height: 100%;
 	display: grid;
 	grid-template-columns: 250px auto;
 }
@@ -123,29 +123,6 @@ body {
 					display: flex;
 					align-items: center;
 					gap: 2px;
-				}
-
-				& button {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					padding: 2px;
-					border-radius: var(--border-radius-s);
-					outline: 1px solid transparent;
-
-					&:hover {
-						background-color: var(--button-primary-bg);
-						color: var(--button-primary-text);
-					}
-				}
-
-				& svg {
-					width: 16px;
-					height: 16px;
-				}
-		
-				&:hover {
-					background-color: var(--main-hover-color);
 				}
 		
 				&.selected {
@@ -202,6 +179,25 @@ body {
 	}
 }
 
+.action-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px;
+	border-radius: var(--border-radius-s);
+	outline: 1px solid transparent;
+
+	&:hover {
+		background-color: var(--button-primary-bg);
+		color: var(--button-primary-text);
+	}
+
+	& svg {
+		width: 16px;
+		height: 16px;
+	}
+}
+
 /* MODAL */
 dialog {
 	align-self: center;
@@ -230,10 +226,6 @@ dialog {
 		border-bottom: var(--main-border);
 		display: grid;
 		gap: var(--spacing-s);
-	}
-
-	& footer {
-		background-color: var(--secondary-bg-color);
 	}
 
 	&.submitted input + span,
@@ -307,6 +299,7 @@ dialog {
 	display: flex;
 	justify-content: flex-end;
 	gap: var(--spacing-s);
+	background-color: var(--secondary-bg-color);
 
 	& button {
 		padding: var(--spacing-xs) var(--spacing-m);
@@ -330,6 +323,101 @@ dialog {
 			&:hover {
 				background-color: var(--input-bg-color);
 			}
+		}
+	}
+}
+
+/* CONTENT */
+.content {
+	display: grid;
+	grid-template-rows: auto 1fr;
+
+	> header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: var(--main-border);
+		padding: 16px var(--spacing-l) 10px;
+		
+		& h2 {
+			font-size: 20px; /* to line up with the sidebar title */
+		}
+	}
+
+	& .todo-sections {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		padding: var(--spacing-m) var(--spacing-l);
+		gap: var(--spacing-l);
+	}
+}
+
+.todo-group {
+	border: var(--main-border);
+	background-color: var(--main-bg-color);
+	border-radius: var(--border-radius-m);
+	overflow-x: hidden;
+	
+	> header {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+		padding: var(--spacing-s) var(--spacing-m);
+		background-color: var(--secondary-bg-color);
+				border-bottom: var(--main-border);
+
+		& h3 {
+			font-size: var(--text-size-m);
+		}
+
+		& span {
+			padding: 2px var(--spacing-xs);
+			border-radius: var(--border-radius-s);
+			background-color: var(--main-hover-color);
+		}
+	}
+}
+
+.todos {
+	display: grid;
+	gap: var(--spacing-xs);
+	padding: var(--spacing-s);
+
+	& .todo {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-s);
+		background-color: var(--input-bg-color);
+		border: var(--main-border);
+		border-radius: var(--border-radius-m);
+		padding: var(--spacing-xs);
+		transition: var(--transition);
+
+		& .right {
+			display: flex;
+			gap: 6px;
+		}
+
+		&:hover {
+			border-color: var(--button-primary-bg);
+		}
+	}
+
+	& .todo-date {
+		margin-top: var(--spacing-s);
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		color: var(--button-primary-bg);
+
+		& time {
+			font-size: var(--text-size-s);
+		}
+
+		& svg {
+			height: 16px;
+			width: 16px;
 		}
 	}
 }
