@@ -41,6 +41,7 @@ svg {
 label, input, button, select {
 	font: inherit;
 	color: inherit;
+	color-scheme: dark;
 }
 
 input, button {
