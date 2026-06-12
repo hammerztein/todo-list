@@ -45,3 +45,30 @@ export const addTodo = (projectId, todoObj) => {
 	saveToStorage(projects);
 };
 
+export const getTodos = (projectId) => {
+	const project = getProject(projectId);
+	return project.todos;
+};
+
+export const getTodosStatusCount = (projectId) => {
+	const todos = getTodos(projectId);
+	const doneTodoCount = todos.filter((todo) => todo.status === 'true').length;
+	const notDoneTodoCount = todos.filter(
+		(todo) => todo.status === 'false',
+	).length;
+	return {
+		done: doneTodoCount,
+		notDone: notDoneTodoCount,
+	};
+};
+
+export const editTodo = (projectId, editFormData) => {
+	const projects = getAllProjects();
+	const projectToUpdateTodo = projects.find(
+		(project) => project.id === projectId,
+	);
+	projectToUpdateTodo.editTodo(editFormData);
+
+	saveToStorage(projects);
+};
+

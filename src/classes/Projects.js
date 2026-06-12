@@ -20,6 +20,11 @@ export default class Project {
 		this.todos.push(todo);
 	}
 
+	editTodo(updatedTodo) {
+		const editableTodo = this.todos.find((todo) => todo.id === updatedTodo.id);
+		editableTodo.updateFields(updatedTodo);
+	}
+
 	removeTodo(todoId) {
 		this.todos = this.todos.filter((todo) => todo.id !== todoId);
 	}
