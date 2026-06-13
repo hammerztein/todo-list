@@ -249,7 +249,7 @@ const handleTodoFormSubmit = (e) => {
 		const todoFormData = {
 			title: elements.todoFormTitleInput.value,
 			status: elements.todoFormStatusInput.value,
-			date: elements.todoFormDateInput.vale,
+			date: elements.todoFormDateInput.value,
 		};
 		addTodo(id, todoFormData);
 	}
