@@ -47,28 +47,22 @@
 						<span>Add Todo</span>
 					</button>
 				</header>
-				<section class="todo-group">
-					<header>
-						<h3>Not Done <span id="not-done-count">1</span></h3>
-					</header>
-					<ul class="todos">
-						<li class="todo">
-							<h4>Todo Name</h4>
-							<p>todo shortened description</p>
-						</li>
-					</ul>
-				</section>
-				<section class="todo-group">
-					<header>
-						<h3>Done <span id="done-count">1</span></h3>
-					</header>
-					<ul class="todos">
-						<li class="todo">
-							<h4>Todo Name</h4>
-							<p>todo shortened description</p>
-						</li>
-					</ul>
-				</section>
+				<div class="todo-sections">
+					<section class="todo-group" id="not-done-todos">
+						<header>
+							<h3>Not Done</h3>
+							<span id="not-done-count">0</span>
+						</header>
+						<ul class="todos"></ul>
+					</section>
+					<section class="todo-group" id="done-todos">
+						<header>
+							<h3>Done</h3>
+							<span id="done-count">0</span>
+						</header>
+						<ul class="todos"></ul>
+					</section>
+				</div>
 			</section>
 		</main>
 		<dialog id="project-modal">
