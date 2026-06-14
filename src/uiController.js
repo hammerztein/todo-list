@@ -7,6 +7,7 @@ import {
 	addTodo,
 	getTodosStatusCount,
 	editTodo,
+	deleteTodo,
 } from './logicController.js';
 
 const elements = {
@@ -69,7 +70,6 @@ const createProjectList = (projects) => {
 
 const createTodoElement = (todo) => {
 	const listEl = document.createElement('li');
-	listEl.dataset.id = todo.id;
 	listEl.className = 'todo';
 	const divLeft = document.createElement('div');
 	divLeft.className = 'left';
@@ -80,7 +80,7 @@ const createTodoElement = (todo) => {
 	dateEl.className = 'todo-date';
 	dateEl.innerHTML =
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>calendar-outline</title><path d="M12 12H17V17H12V12M19 3H18V1H16V3H8V1H6V3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M19 5V7H5V5H19M5 19V9H19V19H5Z" /></svg>';
-	const dateText = document.createTextNode(todo.date);
+	const dateText = document.createTextNode(todo.date ?? 'No Date');
 	dateEl.appendChild(dateText);
 	divLeft.appendChild(todoTitle);
 	divLeft.appendChild(dateEl);
@@ -96,6 +96,9 @@ const createTodoElement = (todo) => {
 	delBtn.innerHTML =
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>delete</title><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg>';
 	editBtn.addEventListener('click', (e) => handleTodoEdit(e, todo));
+	delBtn.addEventListener('click', () =>
+		handleDeleteTodo(elements.contentContainer.dataset.id, todo.id),
+	);
 	divRight.appendChild(editBtn);
 	divRight.appendChild(delBtn);
 	listEl.appendChild(divLeft);
@@ -118,9 +121,14 @@ const createTodoList = (todos) => {
 const setTodoCount = (projectId) => {
 	const notDoneEl = document.querySelector('#not-done-count');
 	const doneEl = document.querySelector('#done-count');
-	const todoStatuses = getTodosStatusCount(projectId);
-	notDoneEl.textContent = todoStatuses.notDone;
-	doneEl.textContent = todoStatuses.done;
+	if (!projectId) {
+		notDoneEl.textContent = 0;
+		doneEl.textContent = 0;
+	} else {
+		const todoStatuses = getTodosStatusCount(projectId);
+		notDoneEl.textContent = todoStatuses.notDone;
+		doneEl.textContent = todoStatuses.done;
+	}
 };
 
 const renderProjects = () => {
@@ -133,6 +141,8 @@ const renderProjects = () => {
 
 const renderTodos = () => {
 	const { id } = elements.contentContainer.dataset;
+	clearContainer(elements.todoNotDoneList);
+	clearContainer(elements.todoDoneList);
 
 	if (!id) {
 		elements.openTodoModalBtn.setAttribute('disabled', true);
@@ -142,14 +152,12 @@ const renderTodos = () => {
 		const project = getProject(id);
 		const todos = project.todos;
 		elements.openTodoModalBtn.removeAttribute('disabled');
-		clearContainer(elements.todoNotDoneList);
-		clearContainer(elements.todoDoneList);
 
 		if (todos.length !== 0) {
 			createTodoList(todos);
 		}
-		setTodoCount(id);
 	}
+	setTodoCount(id);
 };
 
 const setProjectEditFields = (project) => {
@@ -196,6 +204,27 @@ const openEditModal = (type) => {
 	}
 };
 
+const closeModal = (type) => {
+	if (type === 'project') {
+		elements.projectForm.classList.remove('submitted');
+		elements.projectForm.removeAttribute('data-project-id');
+		elements.projectModal.close();
+	}
+
+	if (type === 'todo') {
+		elements.todoForm.classList.remove('submitted');
+		elements.todoForm.removeAttribute('data-todo-id');
+		elements.todoModal.close();
+	}
+};
+
+const checkValidInputs = (formElement) => {
+	const inputs = [...formElement.elements];
+	const requiredInputs = inputs.filter((input) => input.required);
+
+	return !requiredInputs.some((input) => input.value === ' ');
+};
+
 const handleProjectEdit = (e, project) => {
 	setProjectModalType(e);
 	openEditModal('project');
@@ -210,61 +239,54 @@ const handleTodoEdit = (e, todo) => {
 
 const handleProjectFormSubmit = (e) => {
 	e.preventDefault();
-
-	if (elements.projectFormTitleInput.value === ' ') {
+	const isFormValid = checkValidInputs(elements.projectForm);
+	if (!isFormValid) {
 		elements.projectForm.classList.add('submitted');
 		return;
 	}
+	const { type } = elements.projectModal.dataset;
+	const projectFormData = {
+		title: elements.projectFormTitleInput.value,
+	};
 
-	if (elements.projectModal.dataset.type === 'add') {
-		const projectTitle = elements.projectFormTitleInput.value;
-		addProject(projectTitle);
+	if (type === 'add') {
+		addProject(projectFormData.title);
 	}
 
-	if (elements.projectModal.dataset.type === 'edit') {
-		const projectFormData = {
-			id: elements.projectForm.dataset.projectId,
-			title: elements.projectFormTitleInput.value,
-		};
+	if (type === 'edit') {
+		projectFormData.id = elements.projectForm.dataset.projectId;
 		editProject(projectFormData);
 	}
 
-	elements.projectForm.classList.remove('submitted');
-	elements.projectModal.close();
+	closeModal('project');
 	renderProjects();
 };
 
 const handleTodoFormSubmit = (e) => {
 	e.preventDefault();
-
-	if (
-		elements.todoFormTitleInput.value === ' ' ||
-		elements.todoFormStatusInput.value === ' '
-	) {
+	const isFormValid = checkValidInputs(elements.todoForm);
+	if (!isFormValid) {
 		elements.todoForm.classList.add('submitted');
 		return;
 	}
 	const { id } = elements.contentContainer.dataset;
-	if (elements.todoModal.dataset.type === 'add') {
-		const todoFormData = {
-			title: elements.todoFormTitleInput.value,
-			status: elements.todoFormStatusInput.value,
-			date: elements.todoFormDateInput.value,
-		};
+	const { type } = elements.todoModal.dataset;
+	const todoFormData = {
+		title: elements.todoFormTitleInput.value,
+		status: elements.todoFormStatusInput.value,
+		date: elements.todoFormDateInput.value || null,
+	};
+
+	if (type === 'add') {
 		addTodo(id, todoFormData);
 	}
-	if (elements.todoModal.dataset.type === 'edit') {
-		const todoFormData = {
-			id: elements.todoForm.dataset.todoId,
-			title: elements.todoFormTitleInput.value,
-			status: elements.todoFormStatusInput.value,
-			date: elements.todoFormDateInput.value,
-		};
+
+	if (type === 'edit') {
+		todoFormData.id = elements.todoForm.dataset.todoId;
 		editTodo(id, todoFormData);
 	}
 
-	elements.todoForm.classList.remove('submitted');
-	elements.todoModal.close();
+	closeModal('todo');
 	renderTodos();
 };
 
@@ -272,6 +294,11 @@ const handleDeleteProject = (projectId) => {
 	deleteProject(projectId);
 	clearActiveProject(projectId);
 	renderProjects();
+};
+
+const handleDeleteTodo = (projectId, todoId) => {
+	deleteTodo(projectId, todoId);
+	renderTodos();
 };
 
 const setActiveProject = (e) => {
