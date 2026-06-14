@@ -72,3 +72,12 @@ export const editTodo = (projectId, editFormData) => {
 	saveToStorage(projects);
 };
 
+export const deleteTodo = (projectId, todoId) => {
+	const projects = getAllProjects();
+	const projectToDeleteTodo = projects.find(
+		(project) => project.id === projectId,
+	);
+	projectToDeleteTodo.removeTodo(todoId);
+	saveToStorage(projects);
+};
+
