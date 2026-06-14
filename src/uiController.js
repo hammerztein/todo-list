@@ -29,6 +29,16 @@ const elements = {
 	todoDoneList: document.querySelector('#done-todos .todos'),
 };
 
+const formatDate = (dateString) => {
+	if (!dateString) return 'No Date';
+	const date = new Date(dateString);
+	return Intl.DateTimeFormat('en-GB', {
+		year: 'numeric',
+		month: 'short',
+		day: '2-digit',
+	}).format(date);
+};
+
 const clearContainer = (parent) => {
 	const children = [...parent.childNodes];
 	children.forEach((child) => {
@@ -80,7 +90,8 @@ const createTodoElement = (todo) => {
 	dateEl.className = 'todo-date';
 	dateEl.innerHTML =
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>calendar-outline</title><path d="M12 12H17V17H12V12M19 3H18V1H16V3H8V1H6V3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M19 5V7H5V5H19M5 19V9H19V19H5Z" /></svg>';
-	const dateText = document.createTextNode(todo.date ?? 'No Date');
+	const date = formatDate(todo.date);
+	const dateText = document.createTextNode(date);
 	dateEl.appendChild(dateText);
 	divLeft.appendChild(todoTitle);
 	divLeft.appendChild(dateEl);
