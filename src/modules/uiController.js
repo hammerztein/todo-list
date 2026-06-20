@@ -52,22 +52,18 @@ const refreshProjects = () => {
 	const projects = getAllProjects();
 	const activeProjectId = getActiveProjectId();
 	renderProjects(projects, projectElements.list, activeProjectId);
+	if (!activeProjectId) todoElements.modalBtn.setAttribute('disabled', true);
 	if (activeProjectId) {
 		refreshTodos(activeProjectId);
+		todoElements.modalBtn.removeAttribute('disabled');
 	}
 };
 
 const refreshTodos = (activeProjectId) => {
-	if (!activeProjectId) {
-		todoElements.modalBtn.setAttribute('disabled', true);
-	}
-	if (activeProjectId) {
-		todoElements.modalBtn.removeAttribute('disabled');
-		const project = getProject(activeProjectId);
-		const todos = project.todos;
-		const { doneList, notDoneList } = todoElements;
-		renderTodos(todos, activeProjectId, { doneList, notDoneList });
-	}
+	const project = getProject(activeProjectId);
+	const todos = project.todos;
+	const { doneList, notDoneList } = todoElements;
+	renderTodos(todos, activeProjectId, { doneList, notDoneList });
 	setTodoCount(activeProjectId);
 };
 
