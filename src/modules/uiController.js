@@ -52,7 +52,9 @@ const refreshProjects = () => {
 	const projects = getAllProjects();
 	const activeProjectId = getActiveProjectId();
 	renderProjects(projects, projectElements.list, activeProjectId);
-	refreshTodos(activeProjectId);
+	if (activeProjectId) {
+		refreshTodos(activeProjectId);
+	}
 };
 
 const refreshTodos = (activeProjectId) => {
