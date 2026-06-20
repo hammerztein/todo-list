@@ -1,8 +1,10 @@
 import './styles.css';
-import { registerEventListeners, renderProjects } from './uiController.js';
+import {
+	refreshProjects,
+	registerEventListeners,
+} from './modules/uiController.js';
 
 (() => {
 	registerEventListeners();
-	renderProjects();
+	refreshProjects();
 })();
-
