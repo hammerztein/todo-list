@@ -12,7 +12,10 @@ const clearContainer = (parent) => {
 };
 
 const createTodoElement = (todo) => {
-	const listEl = createElement('li', { className: 'todo' });
+	const listEl = createElement('li', {
+		className: 'todo',
+		dataset: { id: todo.id },
+	});
 	const divLeft = createElement('div', { className: 'left' });
 	const divRight = createElement('div', { className: 'right' });
 	const todoTitle = createElement('h4', { textContent: todo.title });
@@ -26,10 +29,16 @@ const createTodoElement = (todo) => {
 	const editBtn = createElement('button', {
 		className: 'action-btn',
 		innerHTML: editIcon,
+		dataset: {
+			action: 'edit',
+		},
 	});
 	const delBtn = createElement('button', {
 		className: 'action-btn',
 		innerHTML: deleteIcon,
+		dataset: {
+			action: 'delete',
+		},
 	});
 
 	appendChildern(divLeft, [todoTitle, dateEl]);
@@ -50,7 +59,7 @@ const createTodoList = (todos, { doneList, notDoneList }) => {
 	});
 };
 
-const renderTodos = (todos, activeProjectId, { doneList, notDoneList }) => {
+const renderTodos = (todos, { doneList, notDoneList }) => {
 	clearContainer(doneList);
 	clearContainer(notDoneList);
 
@@ -60,8 +69,7 @@ const renderTodos = (todos, activeProjectId, { doneList, notDoneList }) => {
 };
 
 const createProjectElement = (project, activeProjectId) => {
-	const listEl = createElement('li');
-	listEl.dataset.id = project.id;
+	const listEl = createElement('li', { dataset: { id: project.id } });
 	if (project.id === activeProjectId) {
 		listEl.classList.add('selected');
 	}
@@ -70,10 +78,16 @@ const createProjectElement = (project, activeProjectId) => {
 	const editBtn = createElement('button', {
 		className: 'action-btn',
 		innerHTML: editIcon,
+		dataset: {
+			action: 'edit',
+		},
 	});
 	const delBtn = createElement('button', {
 		className: 'action-btn',
 		innerHTML: deleteIcon,
+		dataset: {
+			action: 'delete',
+		},
 	});
 	appendChildern(btnContainer, [editBtn, delBtn]);
 	appendChildern(listEl, [projectTitle, btnContainer]);
