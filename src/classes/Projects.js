@@ -14,6 +14,14 @@ export default class Project {
 		}
 	}
 
+	getTodo(todoId) {
+		return this.todos.find((todo) => todo.id === todoId);
+	}
+
+	getTodos() {
+		return this.todos;
+	}
+
 	addTodo(todoObj) {
 		const { id, title, status, date } = todoObj;
 		const todo = new Todo(id, title, status, date);
