@@ -4,33 +4,49 @@ import {
 	editProject,
 	getAllProjects,
 	getProject,
+	getTodo,
 	addTodo,
 	getTodosStatusCount,
 	editTodo,
 	deleteTodo,
 } from './logicController.js';
-import { getActiveProjectId, setActiveProjectId } from './stateManager.js';
+import {
+	getActiveProjectId,
+	getModalType,
+	getModalAction,
+	getEditProjectId,
+	setActiveProjectId,
+	setModalType,
+	setModalAction,
+	setEditProjectId,
+	setEditTodoId,
+	getEditTodoId,
+} from './stateManager.js';
 import { formatDate } from '../utils/date.js';
 import { renderProjects, renderTodos } from './render.js';
+import { capitalizeWord } from '../utils/formatText.js';
+import { checkValidInputs } from '../utils/formValidation.js';
 
 const projectElements = {
 	modal: document.querySelector('#project-modal'),
-	modalBtn: document.querySelector('#add-project-btn'),
+	addProjectBtn: document.querySelector('#add-project-btn'),
 	form: document.querySelector('.project-form'),
-	formTitleInput: document.querySelector('#project-title'),
+	formTitle: document.querySelector('.project-form header h3'),
+	projectTitleInput: document.querySelector('#project-title'),
 	list: document.querySelector('.projects'),
 	formBtn: document.querySelector(".project-form button[type='submit']"),
-	container: document.querySelector('.container .content'),
 };
 
 const todoElements = {
 	modal: document.querySelector('#todo-modal'),
-	modalBtn: document.querySelector('#add-todo-btn'),
+	addTodoBtn: document.querySelector('#add-todo-btn'),
 	form: document.querySelector('.todo-form'),
-	formTitleInput: document.querySelector('#todo-title'),
-	formStatusInput: document.querySelector('#todo-status'),
-	formDateInput: document.querySelector('#todo-date'),
+	formTitle: document.querySelector('.todo-form header h3'),
+	todoTitleInput: document.querySelector('#todo-title'),
+	todoStatusInput: document.querySelector('#todo-status'),
+	todoDateInput: document.querySelector('#todo-date'),
 	formBtn: document.querySelector(".todo-form button[type='submit']"),
+	todoContainer: document.querySelector('.todo-sections'),
 	doneList: document.querySelector('#done-todos .todos'),
 	notDoneList: document.querySelector('#not-done-todos .todos'),
 	doneCount: document.querySelector('#not-done-count'),
@@ -48,100 +64,138 @@ const setTodoCount = (projectId) => {
 	}
 };
 
+const createDefaultProject = () => {};
+
 const refreshProjects = () => {
 	const projects = getAllProjects();
 	const activeProjectId = getActiveProjectId();
 	renderProjects(projects, projectElements.list, activeProjectId);
-	if (!activeProjectId) todoElements.modalBtn.setAttribute('disabled', true);
+	if (!activeProjectId) todoElements.addTodoBtn.setAttribute('disabled', true);
 	if (activeProjectId) {
 		refreshTodos(activeProjectId);
-		todoElements.modalBtn.removeAttribute('disabled');
+		todoElements.addTodoBtn.removeAttribute('disabled');
 	}
 };
 
 const refreshTodos = (activeProjectId) => {
 	const project = getProject(activeProjectId);
-	const todos = project.todos;
 	const { doneList, notDoneList } = todoElements;
-	renderTodos(todos, activeProjectId, { doneList, notDoneList });
+	if (!project) {
+		renderTodos([], { doneList, notDoneList });
+	} else {
+		renderTodos(project.todos, { doneList, notDoneList });
+	}
+
 	setTodoCount(activeProjectId);
 };
 
-const setProjectEditFields = (project) => {
-	projectElements.formTitleInput.value = project.title;
-	projectElements.form.dataset.projectId = project.id;
+const resetModalForm = (modal, form) => {
+	modal.close();
+	form.reset();
+	form.classList.remove('submitted');
 };
 
-const setTodoEditFields = (todo) => {
-	todoElements.formTitleInput.value = todo.title;
-	todoElements.formStatusInput.value = todo.status;
-	todoElements.form.dataset.todoId = todo.id;
-	todoElements.formDateInput.value = todo.date;
+const resetActiveProject = (id) => {
+	const activeProjectId = getActiveProjectId();
+	if (id === activeProjectId) {
+		setActiveProjectId(null);
+		refreshTodos(null);
+	}
 };
 
-const setProjectModalType = (e) => {
-	projectElements.form.classList.remove('submitted');
-	const { buttonType } = e.currentTarget.dataset;
-	projectElements.formBtn.textContent = `${buttonType[0]
-		.toUpperCase()
-		.concat(buttonType.slice(1))} Project`;
-	projectElements.modal.dataset.type = buttonType;
-	projectElements.form.reset();
+const setProjectEditFields = (id) => {
+	const project = getProject(id);
+	projectElements.projectTitleInput.value = project.title;
 };
 
-const setTodoModalType = (e) => {
-	todoElements.form.classList.remove('submitted');
-	const { buttonType } = e.currentTarget.dataset;
-	todoElements.formBtn.textContent = `${buttonType[0]
-		.toUpperCase()
-		.concat(buttonType.slice(1))} Todo`;
-	todoElements.modal.dataset.type = buttonType;
-	todoElements.form.reset();
+const setTodoEditFields = (id) => {
+	const activeProjectId = getActiveProjectId();
+	const todo = getTodo(activeProjectId, id);
+	todoElements.todoTitleInput.value = todo.title;
+	todoElements.todoStatusInput.value = todo.status;
+	todoElements.todoDateInput.value = todo.date;
 };
 
-const openEditModal = (type) => {
-	if (type === 'project') {
-		projectElements.form.classList.remove('submitted');
+const setFormContent = (form) => {
+	const type = getModalType();
+	const action = getModalAction();
+	const { formTitle, formBtn } = form;
+	formTitle.textContent = `${capitalizeWord(action)} ${capitalizeWord(type)}`;
+	formBtn.textContent = `${capitalizeWord(action)} ${capitalizeWord(type)}`;
+};
+
+const handleOpenModal = () => {
+	const modalType = getModalType();
+
+	if (modalType === 'project') {
+		resetModalForm(projectElements.modal, projectElements.form);
 		projectElements.modal.showModal();
 	}
 
-	if (type === 'todo') {
-		todoElements.form.classList.remove('submitted');
+	if (modalType === 'todo') {
+		resetModalForm(todoElements.modal, todoElements.form);
 		todoElements.modal.showModal();
 	}
 };
 
-const closeModal = (type) => {
-	if (type === 'project') {
-		projectElements.form.classList.remove('submitted');
-		projectElements.form.removeAttribute('data-project-id');
+const handleCloseModal = () => {
+	const modalType = getModalType();
+	if (modalType === 'project') {
+		resetModalForm(projectElements.modal, projectElements.form);
 		projectElements.modal.close();
 	}
 
-	if (type === 'todo') {
-		todoElements.form.classList.remove('submitted');
-		todoElements.form.removeAttribute('data-todo-id');
+	if (modalType === 'todo') {
+		resetModalForm(todoElements.modal, todoElements.form);
 		todoElements.modal.close();
 	}
 };
 
-const checkValidInputs = (formElement) => {
-	const inputs = [...formElement.elements];
-	const requiredInputs = inputs.filter((input) => input.required);
+const handleProjectActions = (e) => {
+	const listEl = e.target.closest('li');
+	const actionBtn = e.target.closest('.action-btn');
 
-	return !requiredInputs.some((input) => input.value === ' ');
+	if (!listEl && !actionBtn) {
+		return;
+	}
+
+	const { id } = listEl.dataset;
+
+	if (actionBtn) {
+		const { action } = actionBtn.dataset;
+
+		if (action === 'edit') {
+			setModalType('project');
+			setModalAction('edit');
+			setEditProjectId(id);
+			setFormContent(projectElements);
+			handleOpenModal();
+			setProjectEditFields(id);
+		}
+
+		if (action === 'delete') {
+			resetActiveProject(id);
+			handleDeleteProject(id);
+			refreshProjects();
+		}
+	}
+
+	if (listEl && !actionBtn) {
+		setActiveProjectId(id);
+		refreshProjects();
+	}
 };
 
-const handleProjectEdit = (e, project) => {
-	setProjectModalType(e);
-	openEditModal('project');
-	setProjectEditFields(project);
+const handleAddProject = (projectTitle) => {
+	addProject(projectTitle);
 };
 
-const handleTodoEdit = (e, todo) => {
-	setTodoModalType(e);
-	openEditModal('todo');
-	setTodoEditFields(todo);
+const handleEditProject = (projectId, projectTitle) => {
+	editProject(projectId, projectTitle);
+};
+
+const handleDeleteProject = (projectId) => {
+	deleteProject(projectId);
 };
 
 const handleProjectFormSubmit = (e) => {
@@ -151,22 +205,85 @@ const handleProjectFormSubmit = (e) => {
 		projectElements.form.classList.add('submitted');
 		return;
 	}
-	const { type } = projectElements.modal.dataset;
-	const projectFormData = {
-		title: projectElements.formTitleInput.value,
-	};
+	const modalAction = getModalAction();
 
-	if (type === 'add') {
-		addProject(projectFormData.title);
+	if (modalAction === 'add') {
+		handleAddProject(projectElements.projectTitleInput.value);
 	}
 
-	if (type === 'edit') {
-		projectFormData.id = projectElements.form.dataset.projectId;
-		editProject(projectFormData);
+	if (modalAction === 'edit') {
+		const editFormData = {
+			id: getEditProjectId(),
+			title: projectElements.projectTitleInput.value,
+		};
+		handleEditProject(editFormData);
 	}
 
-	closeModal('project');
+	handleCloseModal();
 	refreshProjects();
+};
+
+const handleAddBtnClick = (e) => {
+	const { action, type } = e.currentTarget.dataset;
+	setModalType(type);
+	setModalAction(action);
+	const formElements = {
+		formTitle: null,
+		formBtn: null,
+	};
+	if (type === 'project') {
+		formElements.formTitle = projectElements.formTitle;
+		formElements.formBtn = projectElements.formBtn;
+	}
+
+	if (type === 'todo') {
+		formElements.formTitle = todoElements.formTitle;
+		formElements.formBtn = todoElements.formBtn;
+	}
+	setFormContent(formElements);
+	handleOpenModal();
+};
+
+const handleAddTodo = (projectId, todoObj) => {
+	addTodo(projectId, todoObj);
+};
+
+const handleEditTodo = (projectId, editFormData) => {
+	editTodo(projectId, editFormData);
+};
+
+const handleDeleteTodo = (activeProjectId, id) => {
+	deleteTodo(activeProjectId, id);
+};
+
+const handleTodoActions = (e) => {
+	const listEl = e.target.closest('li');
+	const actionBtn = e.target.closest('.action-btn');
+
+	if (!listEl && !actionBtn) {
+		return;
+	}
+
+	const { id } = listEl.dataset;
+
+	if (actionBtn) {
+		const { action } = actionBtn.dataset;
+
+		if (action === 'edit') {
+			setModalType('todo');
+			setModalAction('edit');
+			setEditTodoId(id);
+			setFormContent(todoElements);
+			handleOpenModal();
+			setTodoEditFields(id);
+		}
+
+		if (action === 'delete') {
+			const activeProjectId = getActiveProjectId();
+			handleDeleteTodo(activeProjectId, id);
+			refreshTodos(activeProjectId);
+		}
+	}
 };
 
 const handleTodoFormSubmit = (e) => {
@@ -176,57 +293,35 @@ const handleTodoFormSubmit = (e) => {
 		todoElements.form.classList.add('submitted');
 		return;
 	}
-	const id = getActiveProjectId();
-	const { type } = todoElements.modal.dataset;
-	const todoFormData = {
-		title: todoElements.formTitleInput.value,
-		status: todoElements.formStatusInput.value,
-		date: todoElements.formDateInput.value || null,
+	const modalAction = getModalAction();
+	const activeProjectId = getActiveProjectId();
+	const todoObj = {
+		title: todoElements.todoTitleInput.value,
+		status: todoElements.todoStatusInput.value,
+		date: todoElements.todoDateInput.value,
 	};
 
-	if (type === 'add') {
-		addTodo(id, todoFormData);
+	if (modalAction === 'add') {
+		handleAddTodo(activeProjectId, todoObj);
 	}
 
-	if (type === 'edit') {
-		todoFormData.id = todoElements.form.dataset.todoId;
-		editTodo(id, todoFormData);
+	if (modalAction === 'edit') {
+		todoObj.id = getEditTodoId();
+		handleEditTodo(activeProjectId, todoObj);
 	}
 
-	closeModal('todo');
-	refreshTodos(id);
-};
-
-const handleDeleteProject = (projectId) => {
-	deleteProject(projectId);
-	clearActiveProject(projectId);
-	renderProjects();
-};
-
-const handleDeleteTodo = (projectId, todoId) => {
-	deleteTodo(projectId, todoId);
-	renderTodos();
-};
-
-const handleSetActiveProject = (e) => {
-	const click = e.target;
-	const listEl = click.closest('li');
-
-	if (click.closest('.controls') || !listEl) {
-		return;
-	}
-
-	const { id } = listEl.dataset;
-	setActiveProjectId(id);
-	refreshProjects();
+	handleCloseModal();
+	refreshTodos(activeProjectId);
 };
 
 const registerEventListeners = () => {
+	projectElements.list.addEventListener('click', handleProjectActions);
+	projectElements.addProjectBtn.addEventListener('click', handleAddBtnClick);
 	projectElements.form.addEventListener('submit', handleProjectFormSubmit);
-	projectElements.modalBtn.addEventListener('click', setProjectModalType);
-	projectElements.list.addEventListener('click', handleSetActiveProject);
+	todoElements.todoContainer.addEventListener('click', handleTodoActions);
+	todoElements.addTodoBtn.addEventListener('click', handleAddBtnClick);
 	todoElements.form.addEventListener('submit', handleTodoFormSubmit);
-	todoElements.modalBtn.addEventListener('click', setTodoModalType);
 };
 
 export { refreshProjects, registerEventListeners };
+
