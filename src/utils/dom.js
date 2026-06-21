@@ -13,6 +13,12 @@ export const createElement = (tag, options = {}) => {
 		element.innerHTML = options.innerHTML;
 	}
 
+	if (options.dataset) {
+		for (const key in options.dataset) {
+			element.dataset[key] = options.dataset[key];
+		}
+	}
+
 	return element;
 };
 
