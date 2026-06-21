@@ -7,7 +7,7 @@ const saveProjects = () => {
 	saveToStorage(projects);
 };
 
-export const createDefaultProject = () => {
+const createDefaultProject = () => {
 	const id = crypto.randomUUID();
 	const defaultProject = new Project(id, 'Default Project');
 	projects.push(defaultProject);
@@ -15,6 +15,10 @@ export const createDefaultProject = () => {
 };
 
 export const getAllProjects = () => {
+	if (projects.length === 0) {
+		createDefaultProject();
+	}
+
 	return [...projects];
 };
 
